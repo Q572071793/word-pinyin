@@ -1,0 +1,87 @@
+# 依赖包和构建文件
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# 日志文件
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# 运行时文件
+temp/
+output/
+uploads/
+*.tmp
+*.temp
+
+# 构建输出
+build/
+dist/
+build_complete/
+*.zip
+*.tar.gz
+
+# 测试输出
+test-output.*
+test_output.*
+*.test.js
+
+# IDE和编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 环境文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 配置文件（示例文件保留）
+config.json
+!config.example.json
+
+# 文档生成
+docs/generated/
+*.generated.md
+
+# 调试文件
+debug_*.js
+test_*.html
+quick_test.html
+
+# 样本文件
+sample.*
+test-output.*
+
+# 临时文档
+技术设计文档.md
+项目文件清单.md
+一键启动包验证报告*.md
+fix_verification_report.md
+
+# 备份文件
+*.bak
+*.backup
+*~

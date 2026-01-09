@@ -1,0 +1,28 @@
+{
+  "server": {
+    "port": 80,
+    "fallbackPorts": [
+      8080,
+      3000,
+      3001
+    ],
+    "autoOpenBrowser": true
+  },
+  "pdf": {
+    "defaultFontSize": 12,
+    "defaultFontFamily": "Microsoft YaHei",
+    "defaultLineHeight": 1.5,
+    "defaultMargin": 50
+  },
+  "docx": {
+    "defaultFontSize": 12,
+    "defaultFontFamily": "Microsoft YaHei",
+    "defaultLineHeight": 1.5
+  },
+  "pinyin": {
+    "defaultToneType": "mark",
+    "defaultCaseType": "lower",
+    "defaultVcharType": "v",
+    "defaultMaxLineLength": 20
+  }
+}

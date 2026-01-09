@@ -1,0 +1,106 @@
+name: 📦 自动发布版本
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    name: 创建发布
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v3
+    
+    - name: 🏷️ 创建发布
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: 版本 ${{ github.ref }}
+        body: |
+          ## 🎉 新版本发布
+          
+          ### ✨ 新功能
+          - 智能拼音标注
+          - DOCX/PDF导出
+          - 自动端口检测
+          - 浏览器自动打开
+          
+          ### 🚀 快速开始
+          ```bash
+          # Windows
+          start.bat
+          
+          # Linux/macOS
+          ./start.sh
+          ```
+          
+          ### 📖 文档
+          - [使用指南](README.md)
+          - [API文档](docs/api.md)
+          - [贡献指南](CONTRIBUTING.md)
+        draft: false
+        prerelease: false
+
+  build-and-upload:
+    name: 构建并上传
+    needs: create-release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: word-pinyin-linux
+            asset_name: word-pinyin-linux
+          - os: windows-latest
+            artifact_name: word-pinyin-windows
+            asset_name: word-pinyin-windows.exe
+          - os: macos-latest
+            artifact_name: word-pinyin-macos
+            asset_name: word-pinyin-macos
+    
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v3
+    
+    - name: 🔧 设置Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: 📦 安装依赖
+      run: npm ci
+    
+    - name: 🔍 运行测试
+      run: npm test
+    
+    - name: 📊 构建应用
+      run: npm run build
+    
+    - name: 📁 打包应用
+      shell: bash
+      run: |
+        mkdir -p dist
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          zip -r dist/${{ matrix.asset_name }}.zip . -x "node_modules/*" ".git/*" "dist/*"
+        else
+          tar -czf dist/${{ matrix.asset_name }}.tar.gz --exclude="node_modules" --exclude=".git" --exclude="dist" .
+        fi
+    
+    - name: 📤 上传发布资产
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ./dist/${{ matrix.asset_name }}.${{ matrix.os == 'windows-latest' && 'zip' || 'tar.gz' }}
+        asset_name: ${{ matrix.asset_name }}.${{ matrix.os == 'windows-latest' && 'zip' || 'tar.gz' }}
+        asset_content_type: ${{ matrix.os == 'windows-latest' && 'application/zip' || 'application/gzip' }}

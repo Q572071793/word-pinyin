@@ -1,0 +1,133 @@
+name: 🔧 持续集成
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  lint:
+    name: 代码检查
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v3
+    
+    - name: 🔧 设置Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: 📦 安装依赖
+      run: npm ci
+    
+    - name: 🔍 运行ESLint
+      run: npm run lint
+      continue-on-error: true
+    
+    - name: 📊 代码格式化检查
+      run: npm run format:check
+      continue-on-error: true
+
+  test:
+    name: 运行测试
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [14.x, 16.x, 18.x]
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v3
+    
+    - name: 🔧 设置Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: 📦 安装依赖
+      run: npm ci
+    
+    - name: 🧪 运行单元测试
+      run: npm run test:unit
+      continue-on-error: true
+    
+    - name: 🔍 运行集成测试
+      run: npm run test:integration
+      continue-on-error: true
+    
+    - name: 📊 生成测试报告
+      run: npm run test:report
+      continue-on-error: true
+    
+    - name: 📤 上传测试报告
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-report-${{ matrix.os }}-node${{ matrix.node-version }}
+        path: test-report.html
+        retention-days: 30
+
+  security:
+    name: 安全扫描
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v3
+    
+    - name: 🔧 设置Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: 📦 安装依赖
+      run: npm ci
+    
+    - name: 🔍 运行安全扫描
+      run: npm audit
+      continue-on-error: true
+    
+    - name: 🛡️ 检查依赖漏洞
+      run: npm audit fix --dry-run
+      continue-on-error: true
+
+  build:
+    name: 构建检查
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v3
+    
+    - name: 🔧 设置Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: 📦 安装依赖
+      run: npm ci
+    
+    - name: 🏗️ 构建应用
+      run: npm run build
+    
+    - name: 📊 检查构建结果
+      run: |
+        echo "构建完成"
+        ls -la build/ || echo "构建目录不存在"
+      shell: bash
+    
+    - name: 📤 上传构建产物
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-${{ matrix.os }}
+        path: build/
+        retention-days: 7
