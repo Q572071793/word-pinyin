@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文拼音转换工具 - GitHub Pages版本</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(67, 233, 123, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .result-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        #result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            min-height: 100px;
+            font-family: 'SimSun', serif;
+            line-height: 1.6;
+        }
+
+        .pinyin-item {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2px;
+            vertical-align: bottom;
+        }
+
+        .pinyin-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 2px;
+            text-align: center;
+            min-width: 30px;
+        }
+
+        .pinyin-box {
+            border: 1px solid #333;
+            padding: 8px 4px;
+            text-align: center;
+            min-width: 30px;
+            background: white;
+        }
+
+        .character-text {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .warning strong {
+            color: #d63031;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 中文拼音转换工具</h1>
+            <p>GitHub Pages 版本 - 无需服务器，纯前端实现</p>
+        </div>
+        
+        <div class="content">
+            <div class="warning">
+                <strong>⚠️ 注意：</strong> 这是GitHub Pages版本，使用纯前端拼音转换。对于复杂的多音字处理可能不如服务器版本准确。
+                如需更精确的转换，请使用<a href="../README.md">本地服务器版本</a>。
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="textInput">输入中文文本：</label>
+                    <textarea id="textInput" placeholder="请输入要转换的中文文本，例如：你好世界"></textarea>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="convertText()">
+                        <span>🔄 转换拼音</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearText()">
+                        <span>🗑️ 清空</span>
+                    </button>
+                    <button class="btn btn-success" onclick="copyResult()" style="display: none;" id="copyBtn">
+                        <span>📋 复制结果</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="result-section" id="resultSection" style="display: none;">
+                <h3>转换结果：</h3>
+                <div id="result"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Powered by GitHub Pages | 基于 JavaScript 拼音转换</p>
+        </div>
+    </div>
+
+    <script>
+        // 简单的拼音转换映射（基础版本）
+        const pinyinMap = {
+            '你': 'nǐ', '好': 'hǎo', '世': 'shì', '界': 'jiè',
+            '中': 'zhōng', '文': 'wén', '拼': 'pīn', '音': 'yīn',
+            '转': 'zhuǎn', '换': 'huàn', '工': 'gōng', '具': 'jù',
+            '测': 'cè', '试': 'shì', '文': 'wén', '本': 'běn',
+            '请': 'qǐng', '输': 'shū', '入': 'rù', '要': 'yào',
+            '例': 'lì', '如': 'rú', '谢': 'xiè', '谢': 'xiè',
+            '再': 'zài', '见': 'jiàn', '早': 'zǎo', '上': 'shàng',
+            '下': 'xià', '午': 'wǔ', '晚': 'wǎn', '今': 'jīn',
+            '明': 'míng', '天': 'tiān', '星': 'xīng', '期': 'qī',
+            '一': 'yī', '二': 'èr', '三': 'sān', '四': 'sì',
+            '五': 'wǔ', '六': 'liù', '七': 'qī', '八': 'bā',
+            '九': 'jiǔ', '十': 'shí', '百': 'bǎi', '千': 'qiān',
+            '万': 'wàn', '亿': 'yì', '元': 'yuán', '角': 'jiǎo',
+            '分': 'fēn', '年': 'nián', '月': 'yuè', '日': 'rì',
+            '时': 'shí', '分': 'fēn', '秒': 'miǎo', '我': 'wǒ',
+            '们': 'men', '的': 'de', '是': 'shì', '在': 'zài',
+            '了': 'le', '不': 'bù', '和': 'hé', '有': 'yǒu',
+            '大': 'dà', '小': 'xiǎo', '多': 'duō', '少': 'shǎo',
+            '长': 'cháng', '短': 'duǎn', '高': 'gāo', '低': 'dī',
+            '快': 'kuài', '慢': 'màn', '新': 'xīn', '旧': 'jiù',
+            '好': 'hǎo', '坏': 'huài', '美': 'měi', '丑': 'chǒu',
+            '爱': 'ài', '恨': 'hèn', '喜': 'xǐ', '怒': 'nù',
+            '哀': 'āi', '乐': 'lè', '生': 'shēng', '死': 'sǐ',
+            '开': 'kāi', '关': 'guān', '来': 'lái', '去': 'qù',
+            '进': 'jìn', '出': 'chū', '上': 'shàng', '下': 'xià',
+            '左': 'zuǒ', '右': 'yòu', '前': 'qián', '后': 'hòu',
+            '东': 'dōng', '西': 'xī', '南': 'nán', '北': 'běi',
+            '中': 'zhōng', '外': 'wài', '里': 'lǐ', '面': 'miàn',
+            '水': 'shuǐ', '火': 'huǒ', '土': 'tǔ', '木': 'mù',
+            '金': 'jīn', '石': 'shí', '山': 'shān', '河': 'hé',
+            '海': 'hǎi', '天': 'tiān', '地': 'dì', '风': 'fēng',
+            '雨': 'yǔ', '雪': 'xuě', '云': 'yún', '雾': 'wù',
+            '春': 'chūn', '夏': 'xià', '秋': 'qiū', '冬': 'dōng',
+            '花': 'huā', '草': 'cǎo', '树': 'shù', '叶': 'yè',
+            '鸟': 'niǎo', '兽': 'shòu', '鱼': 'yú', '虫': 'chóng'
+        };
+
+        function getPinyin(char) {
+            return pinyinMap[char] || char; // 如果没有找到拼音，返回原字符
+        }
+
+        function convertText() {
+            const textInput = document.getElementById('textInput');
+            const result = document.getElementById('result');
+            const resultSection = document.getElementById('resultSection');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                alert('请输入要转换的中文文本');
+                return;
+            }
+
+            let htmlResult = '<div class="pinyin-container">';
+            
+            // 按行处理文本
+            const lines = text.split('\n');
+            lines.forEach(line => {
+                htmlResult += '<div class="pinyin-line" style="margin: 15px 0; text-align: left;">';
+                
+                // 处理每一行中的每个字符
+                for (let char of line) {
+                    if (char.trim() === '') {
+                        // 处理空格
+                        htmlResult += '<span style="width: 30px; display: inline-block;">&nbsp;</span>';
+                    } else if (/[\u4e00-\u9fa5]/.test(char)) {
+                        // 处理中文字符
+                        const pinyin = getPinyin(char);
+                        htmlResult += `
+                            <div class="pinyin-item">
+                                <div class="pinyin-text">${pinyin}</div>
+                                <div class="pinyin-box">
+                                    <div class="character-text">${char}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // 处理非中文字符（字母、数字、标点等）
+                        htmlResult += `
+                            <div class="pinyin-item">
+                                <div class="pinyin-text" style="color: #999;">${char}</div>
+                                <div class="pinyin-box" style="border-color: #ccc;">
+                                    <div class="character-text" style="color: #666;">${char}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                htmlResult += '</div>';
+            });
+            
+            htmlResult += '</div>';
+            
+            result.innerHTML = htmlResult;
+            resultSection.style.display = 'block';
+            copyBtn.style.display = 'inline-block';
+        }
+
+        function clearText() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'none';
+        }
+
+        function copyResult() {
+            const result = document.getElementById('result').innerText;
+            navigator.clipboard.writeText(result).then(() => {
+                alert('结果已复制到剪贴板');
+            }).catch(() => {
+                alert('复制失败，请手动选择复制');
+            });
+        }
+
+        // 回车键触发转换
+        document.getElementById('textInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                convertText();
+            }
+        });
+    </script>
+</body>
+</html>
