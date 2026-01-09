@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试输入 - 汉字拼音标注工具</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; padding: 20px; }
+        .test-input { 
+            background: #f5f5f5; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .test-input:hover {
+            border-color: #2196F3;
+            background: #e3f2fd;
+        }
+        .test-title { font-weight: bold; color: #333; margin-bottom: 5px; }
+        .test-content { color: #666; font-size: 14px; }
+        .result { 
+            background: #fff; 
+            padding: 10px; 
+            margin-top: 10px; 
+            border-left: 4px solid #4CAF50;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        h2 { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <h1>🧪 测试输入样例</h1>
+    <p>点击任意样例文本，自动复制到主应用进行测试</p>
+    
+    <div class="test-input" onclick="copyToMain('暂且不说收到寒林传音的血修罗与夜修罗心中有何感想，看到眼前这番景象的某位大佬已然有些按奈不住了，原本的方案和计划在此刻差一点就要被他完全的抛在脑后，如果不是灵台依旧清明的话，恐怕现在，大半个玄阳城已经化作冰渣了。')">
+        <div class="test-title">📖 小说文本测试</div>
+        <div class="test-content">复杂小说段落，包含多音字和复杂句式</div>
+    </div>
+    
+    <div class="test-input" onclick="copyToMain('中国银行行长今天去北京开会，讨论经济发展计划。')">
+        <div class="test-title">🏦 多音字测试</div>
+        <div class="test-content">银行、行长、行为、北京等常见多音字</div>
+    </div>
+    
+    <div class="test-input" onclick="copyToMain('中华人民共和国主席习近平在人民大会堂会见美国总统。')">
+        <div class="test-title">🏛️ 正式文本测试</div>
+        <div class="test-content">政治类正式文本，包含专有名词</div>
+    </div>
+    
+    <div class="test-input" onclick="copyToMain('春眠不觉晓，处处闻啼鸟。夜来风雨声，花落知多少。')">
+        <div class="test-title">🌸 古诗词测试</div>
+        <div class="test-content">经典古诗词，测试韵律和格式</div>
+    </div>
+    
+    <div class="test-input" onclick="copyToMain('人工智能、区块链、云计算、大数据、物联网等新兴技术正在改变世界。')">
+        <div class="test-title">💻 科技词汇测试</div>
+        <div class="test-content">现代科技词汇和专业术语</div>
+    </div>
+    
+    <div class="test-input" onclick="copyToMain('你好！最近怎么样？我很好，谢谢你的关心。我们什么时候见面呢？')">
+        <div class="test-title">💬 日常对话测试</div>
+        <div class="test-content">日常对话文本，包含标点符号</div>
+    </div>
+    
+    <div class="test-input" onclick="copyToMain('🎯 这是一个很长的测试文本，用来测试系统的处理能力和性能表现，看看是否能够正确处理长文本而不出现卡顿或错误。我们需要确保系统在处理大量文本时依然保持稳定和准确。')">
+        <div class="test-title">📏 长文本测试</div>
+        <div class="test-content">长文本段落，测试性能和稳定性</div>
+    </div>
+    
+    <script>
+        function copyToMain(text) {
+            // 尝试复制到剪贴板
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('✅ 文本已复制到剪贴板！\n\n请在主应用界面粘贴并点击"转换为拼音"按钮。');
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    showManualCopy(text);
+                });
+            } else {
+                showManualCopy(text);
+            }
+        }
+        
+        function showManualCopy(text) {
+            // 降级方案：显示文本供用户手动复制
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'result';
+            resultDiv.textContent = text;
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.innerHTML = '<strong>📋 请手动复制以下文本：</strong>';
+            titleDiv.style.marginTop = '20px';
+            
+            document.body.appendChild(titleDiv);
+            document.body.appendChild(resultDiv);
+            
+            // 选中文本
+            const range = document.createRange();
+            range.selectNode(resultDiv);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            
+            alert('📋 文本已显示在下方，请手动复制后粘贴到主应用。');
+        }
+        
+        // 添加键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'c') {
+                const selection = window.getSelection().toString();
+                if (selection) {
+                    console.log('用户选择了文本:', selection);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
