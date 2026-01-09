@@ -1,0 +1,39 @@
+# GitHub Pages 配置
+title: 中文拼音转换工具
+description: 将中文文本转换为拼音并支持导出DOCX和PDF格式
+
+# 使用GitHub Pages主题
+theme: jekyll-theme-minimal
+
+# 设置根目录
+baseurl: "/word-pinyin"
+url: "https://q572071793.github.io"
+
+# 启用GitHub Pages功能
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# 排除不需要的文件
+exclude:
+  - node_modules
+  - package.json
+  - package-lock.json
+  - start.js
+  - start.bat
+  - src/
+  - scripts/
+  - docs/
+  - GITHUB_*.md
+  - PROJECT_*.md
+  - MANUAL_*.md
+  - SIMULATED_*.md
+  - TECHNICAL_*.md
+  - USER_MANUAL.md
+  - README.md
+  - CONTRIBUTING.md
+  - LICENSE
+
+# 只包含UI文件
+include:
+  - ui/
