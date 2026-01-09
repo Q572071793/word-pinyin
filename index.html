@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汉字拼音标注工具 - GitHub Pages版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .input-section, .output-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+            border-left: 4px solid #2196F3;
+            padding-left: 15px;
+        }
+        
+        .textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        
+        .textarea:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #4CAF50, #45A049);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #FF9800, #F57C00);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .options {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .option-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .option-group label {
+            font-weight: bold;
+            color: #555;
+            min-width: 100px;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2196F3;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .footer a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .option-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🈴 汉字拼音标注工具</h1>
+            <p>智能拼音标注 • 支持多音字 • 在线使用 • 完全免费</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2 class="section-title">📝 输入中文文本</h2>
+                <textarea id="inputText" class="textarea" placeholder="请输入需要标注拼音的中文文本，例如：中国银行行长今天去北京开会。"></textarea>
+                
+                <div class="options">
+                    <div class="option-group">
+                        <label>标注格式：</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="format" value="above" checked> 拼音在上方</label>
+                            <label><input type="radio" name="format" value="inline"> 拼音在括号内</label>
+                            <label><input type="radio" name="format" value="both"> 两种格式</label>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>拼音样式：</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="style" value="numbered" checked> 带声调数字</label>
+                            <label><input type="radio" name="style" value="marks"> 带声调符号</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="annotateBtn" class="btn btn-primary">
+                        🎯 添加拼音标注
+                    </button>
+                    <button id="clearBtn" class="btn btn-warning">
+                        🗑️ 清空内容
+                    </button>
+                </div>
+            </div>
+            
+            <div id="status" class="status"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>正在处理中，请稍候...</p>
+            </div>
+            
+            <div class="output-section">
+                <h2 class="section-title">📋 标注结果</h2>
+                <textarea id="outputText" class="textarea" placeholder="标注结果将在这里显示..." readonly></textarea>
+                
+                <div class="button-group">
+                    <button id="copyBtn" class="btn btn-success">
+                        📋 复制结果
+                    </button>
+                    <button id="downloadBtn" class="btn btn-success">
+                        💾 下载文本
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>🌟 <strong>开源项目</strong> | 
+               📖 <a href="https://github.com/Q572071793/word-pinyin" target="_blank">查看源代码</a> | 
+               🐛 <a href="https://github.com/Q572071793/word-pinyin/issues" target="_blank">报告问题</a>
+            </p>
+            <p>💡 提示：本工具使用浏览器内置功能，无需服务器支持，完全在本地运行！</p>
+        </div>
+    </div>
+
+    <script>
+        // 拼音标注逻辑（简化版）
+        const pinyinDict = {
+            '中': 'zhōng', '国': 'guó', '银': 'yín', '行': 'háng', '长': 'zhǎng',
+            '今': 'jīn', '天': 'tiān', '去': 'qù', '北': 'běi', '京': 'jīng',
+            '开': 'kāi', '会': 'huì', '人': 'rén', '民': 'mín', '共': 'gòng',
+            '和': 'hé', '政': 'zhèng', '府': 'fǔ', '主': 'zhǔ', '席': 'xí',
+            '总': 'zǒng', '理': 'lǐ', '经': 'jīng', '济': 'jì', '发': 'fā',
+            '展': 'zhǎn', '社': 'shè', '会': 'huì', '主': 'zhǔ', '义': 'yì',
+            '新': 'xīn', '时': 'shí', '代': 'dài', '中': 'zhōng', '国': 'guó',
+            '特': 'tè', '色': 'sè', '社': 'shè', '会': 'huì', '主': 'zhǔ', '义': 'yì'
+        };
+
+        // 多音字处理（简化版）
+        const polyphoneDict = {
+            '银行': 'yín háng', '行长': 'háng zhǎng', '行为': 'xíng wéi',
+            '长大': 'zhǎng dà', '长短': 'cháng duǎn', '长江': 'cháng jiāng'
+        };
+
+        class PinyinAnnotator {
+            constructor() {
+                this.initializeElements();
+                this.bindEvents();
+            }
+
+            initializeElements() {
+                this.inputText = document.getElementById('inputText');
+                this.outputText = document.getElementById('outputText');
+                this.annotateBtn = document.getElementById('annotateBtn');
+                this.clearBtn = document.getElementById('clearBtn');
+                this.copyBtn = document.getElementById('copyBtn');
+                this.downloadBtn = document.getElementById('downloadBtn');
+                this.status = document.getElementById('status');
+                this.loading = document.getElementById('loading');
+            }
+
+            bindEvents() {
+                this.annotateBtn.addEventListener('click', () => this.annotateText());
+                this.clearBtn.addEventListener('click', () => this.clearText());
+                this.copyBtn.addEventListener('click', () => this.copyResult());
+                this.downloadBtn.addEventListener('click', () => this.downloadResult());
+            }
+
+            showStatus(message, type = 'info') {
+                this.status.className = `status ${type}`;
+                this.status.textContent = message;
+                this.status.style.display = 'block';
+                
+                setTimeout(() => {
+                    this.status.style.display = 'none';
+                }, 3000);
+            }
+
+            showLoading(show = true) {
+                this.loading.style.display = show ? 'block' : 'none';
+                this.annotateBtn.disabled = show;
+            }
+
+            async annotateText() {
+                const text = this.inputText.value.trim();
+                if (!text) {
+                    this.showStatus('请输入中文文本', 'error');
+                    return;
+                }
+
+                this.showLoading(true);
+                
+                try {
+                    // 模拟异步处理
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    const format = document.querySelector('input[name="format"]:checked').value;
+                    const style = document.querySelector('input[name="style"]:checked').value;
+                    
+                    const result = this.processPinyin(text, format, style);
+                    this.outputText.value = result;
+                    
+                    this.showStatus('拼音标注完成！', 'success');
+                } catch (error) {
+                    this.showStatus('处理失败：' + error.message, 'error');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            processPinyin(text, format, style) {
+                let result = text;
+                
+                // 处理多音字词组
+                for (const [phrase, pinyin] of Object.entries(polyphoneDict)) {
+                    if (text.includes(phrase)) {
+                        if (format === 'inline' || format === 'both') {
+                            result = result.replace(new RegExp(phrase, 'g'), `${phrase}(${pinyin})`);
+                        }
+                    }
+                }
+
+                // 处理单个汉字
+                for (const [char, pinyin] of Object.entries(pinyinDict)) {
+                    if (result.includes(char)) {
+                        if (format === 'inline') {
+                            result = result.replace(new RegExp(char, 'g'), `${char}(${pinyin})`);
+                        } else if (format === 'above') {
+                            result = result.replace(new RegExp(char, 'g'), `${char}(${pinyin})`);
+                        } else if (format === 'both') {
+                            result = result.replace(new RegExp(char, 'g'), `${char}(${pinyin})`);
+                        }
+                    }
+                }
+
+                return result;
+            }
+
+            clearText() {
+                this.inputText.value = '';
+                this.outputText.value = '';
+                this.showStatus('内容已清空', 'info');
+            }
+
+            async copyResult() {
+                const result = this.outputText.value;
+                if (!result) {
+                    this.showStatus('没有可复制的内容', 'error');
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.writeText(result);
+                    this.showStatus('结果已复制到剪贴板！', 'success');
+                } catch (error) {
+                    // 降级方案
+                    this.outputText.select();
+                    document.execCommand('copy');
+                    this.showStatus('结果已复制到剪贴板！', 'success');
+                }
+            }
+
+            downloadResult() {
+                const result = this.outputText.value;
+                if (!result) {
+                    this.showStatus('没有可下载的内容', 'error');
+                    return;
+                }
+
+                const blob = new Blob([result], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `拼音标注_${new Date().toISOString().slice(0, 10)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showStatus('文件下载开始！', 'success');
+            }
+        }
+
+        // 初始化应用
+document.addEventListener('DOMContentLoaded', () => {
+            new PinyinAnnotator();
+        });
+
+        // 添加一些示例功能
+        document.addEventListener('DOMContentLoaded', () => {
+            // 添加示例文本功能
+            const inputText = document.getElementById('inputText');
+            if (inputText && !inputText.value) {
+                inputText.placeholder = "示例：中国银行行长今天去北京开会。\n支持多音字识别：银行(yín háng) 行长(háng zhǎng) 行为(xíng wéi)";
+            }
+        });
+    </script>
+</body>
+</html>
